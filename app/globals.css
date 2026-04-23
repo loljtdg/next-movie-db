@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
+  color: white;
+  height: 100vh;
+  background: linear-gradient(
+    200.96deg,
+    #fedc2a -29.09%,
+    #dd5789 51.77%,
+    #7a2c9e 129.35%
+  );
+  font-family: sans-serif;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* #root {
+  height: 100vh;
+  width: -webkit-fill-available;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+} */
+
+.page {
+  height: -webkit-fill-available;
+  width: -webkit-fill-available;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 6px;
+  background: transparent;
+}
+
+.main-button-row {
+  width: -webkit-fill-available;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.scan-icon {
+  position: relative;
+
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loading-icon {
+  position: absolute;
+  top: 9px;
+  left: 7px;
+  font-size: 10px !important;
+  color: #0000ff;
+}
+.scan-modal-content {
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+.scan-modal-logs {
+  flex: 1;
+  overflow-y: scroll;
+  margin-top: 6px;
+  padding: 8px;
+  border: #eeeeee 1px solid;
+  border-radius: 8px;
+}
+.scan-modal-log {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: start;
+}
+
+.movie-table-container {
+  flex: 1;
 }

@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 本地电影文件数据管理系统
 
-## Getting Started
+## 项目简介
 
-First, run the development server:
+这是一个基于 Next.js 开发的本地电影文件数据管理系统，用于帮助用户管理和浏览本地电影文件，自动从网上搜索电影信息，并提供直观的展示方式。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 主要功能
+
+- **文件扫描**：扫描指定路径下的电影文件
+- **信息搜索**：自动从网上搜索电影信息（标题、海报、评分等）
+- **多种展示模式**：支持表格模式和卡片模式
+- **筛选与搜索**：提供多种筛选和搜索功能
+- **视频播放**：内置视频播放器，支持多种格式
+- **数据管理**：本地存储电影信息，方便快速访问
+- **文件操作**：支持打开文件所在文件夹
+
+## 技术栈
+
+- **框架**：Next.js 14+（App Router）
+- **前端**：React、TypeScript、Ant Design
+- **数据存储**：JSON 文件存储
+- **其他依赖**：axios、dayjs 等
+
+## 数据存储
+
+- 电影信息存储在 `data/database.json` 文件中
+- 电影封面图片存储在 `data/imgs/` 目录中
+- 配置文件存储在 `data/cfg.json` 文件中
+
+## 项目结构
+
+```
+app/
+├── api/                    # API 路由
+│   ├── config/             # 配置管理接口
+│   ├── db/                 # 数据库操作接口
+│   ├── image/              # 图片资源接口
+│   ├── login/              # 登录验证接口
+│   ├── open/               # 打开文件/文件夹接口
+│   ├── scan/               # 扫描任务接口
+│   │   ├── do-scan/        # 扫描核心逻辑
+│   │   ├── start/          # 启动扫描
+│   │   └── stop/           # 停止扫描
+│   ├── stream/             # 视频流接口
+│   └── utils/              # 工具函数
+├── lib/                    # 客户端工具
+│   └── axios.ts            # axios 配置
+├── list/                   # 电影列表页面
+│   ├── scan-pane/          # 扫描面板组件
+│   └── table-pane/         # 表格/卡片展示组件
+├── login/                  # 登录页面
+├── movie/                  # 电影播放页面
+├── globals.css             # 全局样式
+├── layout.tsx              # 布局组件
+└── page.tsx                # 首页
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API 接口
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 接口路径 | 方法 | 功能描述 |
+|---------|------|---------|
+| `/api/login` | POST | 用户登录 |
+| `/api/config` | GET/PUT | 获取/更新配置 |
+| `/api/db` | GET/POST/DELETE | 电影数据 CRUD |
+| `/api/scan/start` | POST | 启动扫描任务 |
+| `/api/scan/stop` | POST | 停止扫描任务 |
+| `/api/scan/current` | GET | 获取当前扫描状态 |
+| `/api/stream` | GET | 视频流播放 |
+| `/api/image` | GET | 获取图片资源 |
+| `/api/open` | POST | 打开文件/文件夹 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 安装指南
 
-## Learn More
+### 前提条件
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js >= 18.x
+- npm >= 9.x
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 安装步骤
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. 克隆项目
+   ```bash
+   git clone <项目地址>
+   cd next-movie-db
+   ```
 
-## Deploy on Vercel
+2. 安装依赖
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. 启动开发服务器
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. 构建生产版本
+   ```bash
+   npm run build
+   ```
+
+5. 启动生产服务器
+   ```bash
+   npm start
+   ```
+
+## 使用说明
+
+1. **登录系统**：访问首页，使用默认密码登录
+2. **扫描电影**：在扫描面板中添加电影目录，点击扫描按钮开始扫描
+3. **查看电影列表**：扫描完成后，在表格面板中查看电影信息
+4. **切换展示模式**：支持表格模式和卡片模式切换
+5. **播放电影**：点击电影条目进入播放页面
+6. **打开文件夹**：在播放页面点击文件夹图标打开电影所在目录
+
+## 注意事项
+
+- 首次扫描可能需要较长时间，取决于电影文件数量和网络速度
+- 确保网络连接正常，以便能够搜索电影信息
+- 扫描大量电影时，可能会占用较多系统资源
+- 视频播放需要浏览器支持相应的视频格式
+
+## 开发
+
+### 代码 lint
+```bash
+npm run lint
+```
+
+### 类型检查
+```bash
+npm run typecheck
+```
+
+## 许可证
+
+MIT License
