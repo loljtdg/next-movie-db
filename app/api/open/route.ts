@@ -36,12 +36,12 @@ export async function POST(request: Request) {
 
     if (type === "folder") {
       command = "explorer.exe";
-      args = ["/select", `"${path}"`];
+      args = ["/select,", path];
     } else {
       command = "explorer.exe";
       args = [path];
     }
-
+    console.log(command, args);
     const child = spawn(command, args, {
       detached: true,
       stdio: "pipe",

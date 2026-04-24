@@ -11,6 +11,8 @@ import {
   Typography,
   DatePicker,
   InputNumber,
+  Modal,
+  message,
 } from "antd";
 
 import {
@@ -20,11 +22,13 @@ import {
   PlaySquareOutlined,
   CloseOutlined,
   AppstoreOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
+import axios from "axios";
 
 import { Actor, DBTag, Movie } from "../../api/db/types";
 import { DataType } from "./types";
@@ -129,10 +133,57 @@ export function MovieTable({
   const { movies, actorMap, tagMap } = data;
   const [currentPageData, setCurrentPageData] = useState<Movie[]>([]);
   const [showCardModal, setShowCardModal] = useState<boolean>(false);
+  const [movieList, setMovieList] = useState<Movie[]>(movies);
 
   useEffect(() => {
     setCurrentPageData(movies.slice(0, paginationConfig.defaultPageSize));
+    setMovieList(movies);
   }, [movies]);
+
+  const handleReviewEdit = (movie: Movie) => {
+    let selectedReview: "unreview" | "reviewed" | "unnice" =
+      movie.review || "unreview";
+
+    Modal.confirm({
+      title: `标记 Review - ${movie.id}`,
+      content: (
+        <Select
+          defaultValue={movie.review || "unreview"}
+          onChange={(value: "unreview" | "reviewed" | "unnice") => {
+            selectedReview = value;
+          }}
+          options={[
+            { label: "未标记", value: "unreview" },
+            { label: "已阅", value: "reviewed" },
+            { label: "不佳", value: "unnice" },
+          ]}
+          style={{ width: "100%", marginTop: 16 }}
+        />
+      ),
+      onOk: async () => {
+        try {
+          await axios.put("/api/db/movie-review", {
+            id: movie.id,
+            review: selectedReview,
+          });
+          message.success("更新成功");
+          // 更新本地状态
+          setMovieList((prev) =>
+            prev.map((m) =>
+              m.id === movie.id
+                ? {
+                    ...m,
+                    review: selectedReview,
+                  }
+                : m,
+            ),
+          );
+        } catch (error) {
+          message.error("更新失败");
+        }
+      },
+    });
+  };
 
   // 标签选项列表（用于标签筛选）
   const tagOptions = useMemo(() => {
@@ -625,23 +676,48 @@ export function MovieTable({
           <FilterOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
         ),
       },
-      //   {
-      //     title: '已搜索',
-      //     dataIndex: 'searched',
-      //     key: 'searched',
-      //     width: 80,
-      //     render: (searched: boolean) => (
-      //       <Tag color={searched ? 'green' : 'red'}>{searched ? '是' : '否'}</Tag>
-      //     ),
-      //     filters: [
-      //       { text: '已搜索', value: true },
-      //       { text: '未搜索', value: false },
-      //     ],
-      //     onFilter: (value, record) => record.searched === value,
-      //     filterMultiple: false,
-      //   },
+      {
+        title: "Review",
+        dataIndex: "review",
+        key: "review",
+        width: 100,
+        render: (review: string | undefined, record) => (
+          <Tag
+            color={
+              review === "reviewed"
+                ? "green"
+                : review === "unnice"
+                  ? "red"
+                  : "default"
+            }
+            onClick={() => handleReviewEdit(record)}
+            style={{ cursor: "pointer" }}
+          >
+            <Space>
+              {review === "reviewed"
+                ? "已阅"
+                : review === "unnice"
+                  ? "不佳"
+                  : "未标记"}
+              <EditOutlined />
+            </Space>
+          </Tag>
+        ),
+        filters: [
+          { text: "未标记", value: "unreview" },
+          { text: "已阅", value: "reviewed" },
+          { text: "不佳", value: "unnice" },
+        ],
+        onFilter: (value, record) => {
+          if (value === "unreview") {
+            return record.review === undefined || record.review === "unreview";
+          }
+          return record.review === value;
+        },
+        filterMultiple: false,
+      },
     ];
-  }, [data]);
+  }, [data, handleReviewEdit]);
 
   return (
     <div className="movie-table-container">
@@ -658,7 +734,7 @@ export function MovieTable({
       <Image.PreviewGroup>
         <Table
           columns={columns}
-          dataSource={movies}
+          dataSource={movieList}
           rowKey="id"
           pagination={paginationConfig}
           scroll={{ x: "100%", y: "calc(100vh - 160px)" }}

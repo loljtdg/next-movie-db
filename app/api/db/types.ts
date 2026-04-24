@@ -19,6 +19,7 @@ export interface Movie {
   actor_ids: string[]; // 关联演员 ID 数组
   created_at: number; // 记录创建时间，时间戳
   updated_at: number; // 记录更新时间，时间戳
+  review?: "unreview" | "reviewed" | "unnice"; // 人工标记：undefined/unreview=未标记, reviewed=已阅, unnice=不佳
 }
 
 export interface Actor {
